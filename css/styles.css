@@ -1,0 +1,455 @@
+:root {
+    --asf: #1b2430;
+    --asf2: #273245;
+    --line: #f5c518;
+    --sign: #1d4ed8;
+    --bg: #eef1f5;
+    --card: #fff;
+    --ink: #101828;
+    --mut: #667085;
+    --bd: #e0e5ec;
+    --ok: #16a34a;
+    --bad: #dc2626
+}
+
+* {
+    box-sizing: border-box
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 15px/1.45 Barlow, system-ui, sans-serif
+}
+
+h1,
+h2,
+.num {
+    font-family: "Barlow Condensed", Barlow, sans-serif;
+    margin: 0
+}
+
+/* Header */
+header {
+    background: var(--asf);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 14px 28px;
+    border-bottom: 4px solid var(--line);
+    flex-wrap: wrap
+}
+
+.logo {
+    width: 42px;
+    height: 42px;
+    background: var(--sign);
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font: 700 28px "Barlow Condensed";
+    border: 2px solid #fff
+}
+
+header h1 {
+    font-size: 26px;
+    letter-spacing: .3px
+}
+
+header small {
+    color: #9fb0c8;
+    display: block;
+    margin-top: -2px
+}
+
+.sp {
+    flex: 1
+}
+
+.tar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #cdd8e8
+}
+
+.tar input {
+    width: 70px
+}
+
+.sync {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #9fb0c8;
+    font-size: 13px
+}
+
+.dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #64748b
+}
+
+.dot.on {
+    background: #22c55e;
+    box-shadow: 0 0 0 4px #22c55e33
+}
+
+/* Layout */
+main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 20px;
+    padding: 20px 28px;
+    max-width: 1500px;
+    margin: auto
+}
+
+@media(max-width:980px) {
+    main {
+        grid-template-columns: 1fr;
+        padding: 14px
+    }
+
+    header {
+        padding: 12px 14px
+    }
+}
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--bd);
+    border-radius: 10px;
+    padding: 18px
+}
+
+/* Estadísticas */
+.stats {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 16px
+}
+
+@media(max-width:600px) {
+    .stats {
+        grid-template-columns: 1fr
+    }
+}
+
+.stat {
+    background: var(--asf);
+    color: #fff;
+    border-radius: 10px;
+    padding: 14px 18px
+}
+
+.stat .num {
+    font-size: 44px;
+    line-height: 1
+}
+
+.stat span {
+    color: #9fb0c8
+}
+
+.stat.y {
+    background: var(--line);
+    color: var(--asf)
+}
+
+.stat.y span {
+    color: #5b4a00
+}
+
+/* Búsqueda y mapa */
+.search {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap
+}
+
+.search input {
+    flex: 1;
+    min-width: 200px
+}
+
+input,
+select {
+    font: inherit;
+    padding: 9px 11px;
+    border: 1px solid #cbd3df;
+    border-radius: 7px;
+    background: #fff;
+    color: var(--ink);
+    width: 100%
+}
+
+input:focus,
+select:focus,
+button:focus-visible {
+    outline: 3px solid #93b4ff;
+    outline-offset: 1px
+}
+
+#hint {
+    color: var(--mut)
+}
+
+#hint b {
+    color: var(--ink)
+}
+
+canvas {
+    width: 100%;
+    display: block;
+    border-radius: 8px;
+    cursor: pointer;
+    background: var(--asf)
+}
+
+.leg {
+    display: flex;
+    gap: 18px;
+    margin-top: 10px;
+    color: var(--mut);
+    font-size: 13px
+}
+
+.leg i {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    margin-right: 6px;
+    vertical-align: -1px
+}
+
+/* Panel lateral */
+aside .card {
+    position: sticky;
+    top: 14px
+}
+
+aside h2 {
+    font-size: 28px
+}
+
+.empty {
+    color: var(--mut);
+    padding: 30px 6px;
+    text-align: center
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin: 11px 0 4px;
+    font-size: 14px
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px
+}
+
+button {
+    font: 600 15px Barlow;
+    border: 0;
+    border-radius: 8px;
+    padding: 11px 16px;
+    cursor: pointer;
+    background: var(--sign);
+    color: #fff;
+    width: 100%;
+    margin-top: 16px
+}
+
+button.bad {
+    background: var(--bad)
+}
+
+button:hover {
+    filter: brightness(1.1)
+}
+
+button:disabled {
+    opacity: .5
+}
+
+.badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 99px;
+    font-weight: 600;
+    font-size: 13px;
+    color: #fff;
+    vertical-align: middle
+}
+
+dl {
+    margin: 14px 0 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 14px
+}
+
+dt {
+    color: var(--mut)
+}
+
+dd {
+    margin: 0;
+    font-weight: 500;
+    text-align: right
+}
+
+.tot {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: #fff8d6;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline
+}
+
+.tot .num {
+    font-size: 34px
+}
+
+/* Historial */
+.hist {
+    margin-top: 16px;
+    overflow-x: auto
+}
+
+.hist h2 {
+    margin-bottom: 8px;
+    font-size: 24px
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px
+}
+
+th {
+    text-align: left;
+    color: var(--mut);
+    font-weight: 600;
+    padding: 8px;
+    border-bottom: 2px solid var(--bd)
+}
+
+td {
+    padding: 8px;
+    border-bottom: 1px solid var(--bd);
+    white-space: nowrap
+}
+
+.pl {
+    font: 600 15px "Barlow Condensed";
+    background: #fff;
+    border: 2px solid var(--asf);
+    border-radius: 4px;
+    padding: 0 6px
+}
+
+/* Toast, diálogo, setup */
+#toast {
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--asf);
+    color: #fff;
+    padding: 11px 20px;
+    border-radius: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s;
+    z-index: 9
+}
+
+#toast.show {
+    opacity: 1
+}
+
+dialog {
+    border: 0;
+    border-radius: 12px;
+    padding: 26px;
+    max-width: 340px;
+    width: 90%;
+    text-align: center
+}
+
+dialog::backdrop {
+    background: #0008
+}
+
+dialog .num {
+    font-size: 56px;
+    color: var(--ok)
+}
+
+#setup {
+    position: fixed;
+    inset: 0;
+    background: var(--asf);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    z-index: 20;
+    padding: 20px
+}
+
+#setup div {
+    max-width: 520px
+}
+
+#setup code {
+    background: #0006;
+    padding: 2px 6px;
+    border-radius: 4px
+}
+
+[hidden] {
+    display: none !important
+}
+
+@media(prefers-reduced-motion:reduce) {
+    * {
+        transition: none !important
+    }
+}
+
+/* Enlace de navegación del encabezado */
+.navlink {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    border: 1px solid #9fb0c8;
+    border-radius: 8px;
+    padding: 7px 14px
+}
+
+.navlink:hover {
+    background: #ffffff1a
+}
+
+/* Logo en imagen (reemplaza al cuadro con la letra P) */
+.logo-img {
+    width: 42px;
+    height: 42px
+}

@@ -1,0 +1,289 @@
+/* Cabina de inspeccion del vehiculo (la carga js/cabina.js por su cuenta) */
+
+/* Ventana casi a pantalla completa */
+#dlgCabina article {
+    width: min(98vw, 1180px);
+    max-width: none;
+    max-height: 96vh;
+    margin: 0;
+    padding: 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    overflow: hidden;
+}
+
+#dlgCabina header {
+    margin: -1rem -1.1rem 0;
+    padding: .7rem 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    flex-wrap: wrap;
+}
+
+#cabTitulo {
+    font: 700 1.35rem "Barlow Condensed", Barlow, sans-serif;
+    margin-right: auto;
+}
+
+/* Pasos: las 4 vistas */
+.cab-pasos {
+    display: flex;
+    gap: .4rem;
+    flex-wrap: wrap;
+}
+
+.cab-pasos button {
+    width: auto;
+    margin: 0;
+    padding: .3rem .75rem;
+    font-size: .85rem;
+    border-radius: 99px;
+    background: transparent;
+    color: var(--pico-muted-color);
+    border: 1px solid var(--pico-muted-border-color);
+}
+
+.cab-pasos button.hecha {
+    color: var(--ok);
+    border-color: var(--ok);
+}
+
+.cab-pasos button.actual {
+    background: var(--line);
+    border-color: var(--line);
+    color: #111;
+    font-weight: 600;
+}
+
+/* Escenario: video + lienzo con la misma proporcion que la foto */
+.cab-escena {
+    --prop: 1.7778;
+    position: relative;
+    width: min(100%, calc(70vh * var(--prop)));
+    aspect-ratio: var(--prop);
+    margin: 0 auto;
+    background: #000;
+    border-radius: 10px;
+    overflow: hidden;
+    flex: 0 0 auto;
+}
+
+.cab-escena video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.cab-escena canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: block;
+    border-radius: 0;
+    background: transparent;
+    cursor: default;
+}
+
+.cab-escena canvas.editable {
+    cursor: crosshair;
+    touch-action: none;
+}
+
+/* Al marcar, la camara de las manos queda chiquita en una esquina */
+.cab-escena video.pip {
+    inset: auto;
+    top: 12%;
+    right: 1.2%;
+    width: 21%;
+    height: auto;
+    z-index: 2;
+    pointer-events: none;
+    border: 2px solid #fff;
+    border-radius: 8px;
+    opacity: .88;
+    box-shadow: 0 4px 14px #0008;
+}
+
+.cab-escena video.espejo {
+    transform: scaleX(-1);
+}
+
+.cab-estado {
+    margin: 0;
+    min-height: 2.6em;
+    text-align: center;
+    font-weight: 500;
+}
+
+.cab-botones {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+
+.cab-botones button {
+    width: auto;
+    margin: 0;
+    padding: .55rem 1.1rem;
+}
+
+/* Resumen final */
+.cab-resumen {
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.cab-res-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: .8rem;
+}
+
+.cab-res-item {
+    margin: 0;
+    padding: .5rem;
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    text-align: left;
+    background: var(--pico-card-sectioning-background-color);
+    color: var(--pico-color);
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: 10px;
+}
+
+.cab-res-item:hover {
+    border-color: var(--line);
+}
+
+.cab-res-item img {
+    width: 100%;
+    border-radius: 6px;
+    display: block;
+}
+
+.cab-res-item span {
+    font-size: .85rem;
+    color: var(--pico-muted-color);
+}
+
+.cab-res-total {
+    margin: .8rem 0 0;
+    text-align: center;
+}
+
+/* Miniaturas 2x2 (panel lateral y ticket) */
+.ins-mini {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .4rem;
+    margin-bottom: .5rem;
+}
+
+.ins-mini figure {
+    margin: 0;
+    position: relative;
+}
+
+.ins-mini img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 6px;
+    display: block;
+    background: #000;
+}
+
+.ins-mini figcaption {
+    position: absolute;
+    left: 4px;
+    bottom: 4px;
+    padding: 0 6px;
+    border-radius: 4px;
+    background: #000a;
+    color: #fff;
+    font-size: .72rem;
+}
+
+.ins-res {
+    margin: 0 0 .6rem;
+    font-size: .9rem;
+}
+
+.ins-vacia {
+    margin-bottom: .6rem;
+    border: 1px dashed var(--pico-muted-border-color);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.tk .ins-mini {
+    margin: 0 0 .5rem;
+}
+
+.tk-danos {
+    margin: 0 0 .5rem;
+    font-size: .9rem;
+}
+
+/* Ver una inspeccion guardada */
+#dlgVerIns article {
+    width: min(96vw, 980px);
+    max-width: none;
+    max-height: 94vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#dlgVerIns .ver-cuerpo {
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+#dlgVerIns figure {
+    margin: 0;
+}
+
+#dlgVerIns img {
+    width: 100%;
+    border-radius: 8px;
+    display: block;
+}
+
+#dlgVerIns ol {
+    margin: .3rem 0 0;
+    padding-left: 1.3rem;
+}
+
+#dlgVerIns li {
+    list-style: decimal;
+}
+
+#dlgVerIns footer button {
+    width: auto;
+    margin: 0;
+}
+
+@media print {
+    .tk .ins-mini {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .tk .ins-mini figcaption {
+        background: #fff;
+        color: #000;
+    }
+}

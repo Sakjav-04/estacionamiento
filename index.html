@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title data-i18n="app.titulo">Patio Central · Control de estacionamiento</title>
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap"
+    rel="stylesheet">
+  <!-- Pico.css: libreria de diseno. Va primero para que app.css pueda ajustarla -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.6/css/pico.min.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+
+<body>
+  <div id="setup" hidden>
+    <div>
+      <h1 style="font-size:38px">Falta conectar Firebase</h1>
+      <p>Abre <code>js/firebase.js</code> y pega ahí los datos de tu proyecto de Firebase (Configuración del proyecto →
+        Tus apps → Web). Luego recarga la página.</p>
+    </div>
+  </div>
+
+  <header class="app-bar container-fluid">
+    <img class="logo-img" src="img/logo.svg" alt="Logo Patio Central" data-i18n-alt="app.logoAlt">
+    <div>
+      <h1>Patio Central</h1><small data-i18n="app.sub">Control de estacionamiento</small>
+    </div>
+    <div class="sp"></div>
+    <a href="reportes.html" role="button" class="outline" data-i18n="nav.reportes">Reportes</a>
+    <button type="button" id="btnVoz" class="outline secondary" aria-pressed="false" data-i18n="voz.activar">Activar
+      voz</button>
+    <button type="button" id="btnVozAyuda" class="outline secondary" title="Ver comandos de voz"
+      aria-label="Ver comandos de voz" data-i18n-title="voz.ayudaTitle" data-i18n-aria="voz.ayudaTitle">?</button>
+    <button type="button" id="btnNarrador" class="outline secondary" aria-pressed="true"
+      title="Voz que cuenta lo que pasa en la página" data-i18n-title="narr.title">Narrador: sí</button>
+    <select id="selIdioma" class="sel-idioma" aria-label="Idioma" title="Idioma" data-i18n-aria="idioma.label"
+      data-i18n-title="idioma.label">
+      <option value="es">Español</option>
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+      <option value="pt">Português</option>
+    </select>
+    <label class="tar"><span data-i18n="tarifa.label">Tarifa por hora</span> $<input id="tarifa" type="number" min="0"
+        step="1" value="20"></label>
+    <div class="sync"><span class="dot" id="dot"></span><span id="syncTxt"
+        data-i18n="sync.conectando">Conectando…</span></div>
+  </header>
+
+  <p id="vozTxt" class="voz-txt container-fluid" role="status" aria-live="polite"></p>
+
+  <main class="layout container-fluid">
+    <section>
+      <div class="stats">
+        <article class="stat">
+          <div class="num" id="sDisp">–/20</div><span data-i18n="st.disp">Disponibles</span>
+        </article>
+        <article class="stat">
+          <div class="num" id="sOcu">–</div><span data-i18n="st.ocu">Ocupados</span>
+        </article>
+        <article class="stat y">
+          <div class="num" id="sIng">$0</div><span data-i18n="st.hoy">Cobrado hoy</span>
+        </article>
+      </div>
+      <article>
+        <div class="search"><input id="q" type="search" placeholder="Buscar vehículo por placa (ej. ABC123)"
+            data-i18n-ph="q.ph" autocomplete="off"><span id="hint"></span></div>
+        <canvas id="cv" width="960" height="460" aria-label="Mapa del estacionamiento"
+          data-i18n-aria="mapa.aria"></canvas>
+        <div class="leg">
+          <span><i style="background:#22c55e"></i><span data-i18n="leg.disp">Disponible</span></span>
+          <span><i style="background:#ef4444"></i><span data-i18n="leg.ocu">Ocupado</span></span>
+          <span><i style="background:#f5c518"></i><span data-i18n="leg.res">Resultado de búsqueda</span></span>
+          <span data-i18n="leg.clic">Haz clic en un cajón para ver o registrar</span>
+        </div>
+      </article>
+      <article class="hist">
+        <header class="hist-head">
+          <h2 data-i18n="h.titulo">Historial de movimientos</h2>
+          <div class="hist-tools">
+            <input id="fq" type="search" placeholder="Placa o lugar" data-i18n-ph="h.ph" autocomplete="off">
+            <button type="button" id="btnExcel" class="outline secondary" data-i18n="h.excel">Descargar Excel</button>
+          </div>
+        </header>
+        <div class="overflow-auto">
+          <table>
+            <thead>
+              <tr>
+                <th data-i18n="th.lugar">Lugar</th>
+                <th data-i18n="th.placa">Placa</th>
+                <th data-i18n="th.entrada">Entrada</th>
+                <th data-i18n="th.salida">Salida</th>
+                <th data-i18n="th.monto">Monto</th>
+              </tr>
+            </thead>
+            <tbody id="hb">
+              <tr>
+                <td colspan="5" class="empty" data-i18n="h.vacio">Sin movimientos todavía</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+    <aside>
+      <article id="panel">
+        <div class="empty" data-i18n="p.vacio">Selecciona un cajón del mapa para ver sus detalles o registrar un
+          vehículo.</div>
+      </article>
+    </aside>
+  </main>
+
+  <!-- Ticket: vista previa y ticket final -->
+  <dialog id="dlg">
+    <article>
+      <header><strong id="tkTitulo" data-i18n="tk.default">Ticket</strong></header>
+      <div id="ticket"></div>
+      <p id="tkMsg" class="tk-msg"></p>
+      <footer>
+        <button id="tkPdf" class="secondary" data-i18n="tk.pdf">Descargar PDF</button>
+        <button id="tkImprimir" class="outline" data-i18n="tk.imprimir">Imprimir</button>
+        <button id="dlgOk" data-i18n="tk.cerrar">Cerrar</button>
+      </footer>
+    </article>
+  </dialog>
+
+  <!-- Ayuda de comandos de voz (los comandos se dicen en español; los titulos y notas siguen el idioma elegido) -->
+  <dialog id="dlgVoz">
+    <article>
+      <header><strong data-i18n="ay.titulo">Comandos de voz</strong></header>
+      <div class="voz-ayuda">
+        <p data-i18n-html="ay.intro">Pulsa <b>Activar voz</b> y habla con normalidad. Funciona en Chrome o Edge, con
+          internet.</p>
+        <p><small data-i18n="ay.idioma">Los comandos se dicen en español, como en los ejemplos de abajo.</small></p>
+        <dl>
+          <dt data-i18n="ay.lugar">Elegir lugar</dt>
+          <dd>"lugar 5"</dd>
+          <dt data-i18n="ay.buscar">Buscar placa</dt>
+          <dd>"buscar placa ABC123" · "limpiar búsqueda"</dd>
+          <dt data-i18n="ay.llenar">Llenar el registro</dt>
+          <dd>"placa ABC123" · "modelo Nissan Versa" · "color rojo" · "nombre Juan Pérez" · "teléfono 55 1234 5678"</dd>
+          <dt data-i18n="ay.camara">Cámara</dt>
+          <dd>"abrir cámara" · "tomar foto" · "repetir foto"</dd>
+          <dt data-i18n="ay.registrar">Registrar</dt>
+          <dd>"registrar entrada"</dd>
+          <dt data-i18n="ay.ticket">Ticket</dt>
+          <dd>"previsualizar ticket" · "descargar PDF" · "imprimir" · "cerrar"</dd>
+          <dt data-i18n="ay.cobro">Cobro</dt>
+          <dd>"boleto perdido" · "quitar boleto perdido"</dd>
+          <dt data-i18n="ay.salida">Salida</dt>
+          <dd>"liberar" <span data-i18n="ay.confirmar">(pide confirmar)</span> · "liberar el lugar 5"</dd>
+          <dt data-i18n="ay.error">Error de captura</dt>
+          <dd>"cancelar entrada" <span data-i18n="ay.confirmar">(pide confirmar)</span></dd>
+          <dt data-i18n="ay.tarifa">Tarifa</dt>
+          <dd>"tarifa 25" <span data-i18n="ay.confirmar">(pide confirmar)</span></dd>
+          <dt data-i18n="ay.otros">Otros</dt>
+          <dd>"abrir reportes" · "ayuda" · "apagar voz"</dd>
+        </dl>
+        <p><small data-i18n="ay.pie">Las acciones que no se pueden deshacer preguntan primero: responde "sí" o
+            "no".</small></p>
+      </div>
+      <footer><button id="vozCerrar" data-i18n="tk.cerrar">Cerrar</button></footer>
+    </article>
+  </dialog>
+
+  <!-- Bienvenida: elegir el idioma (aparece una vez por sesion; no pide usuario ni contrasena) -->
+  <dialog id="dlgBienvenida" aria-labelledby="bvTitulo">
+    <article class="bv">
+      <img class="bv-logo" src="img/logo.svg" alt="Patio Central">
+      <h2 id="bvTitulo">Patio Central</h2>
+      <p class="bv-hola">Bienvenido · Welcome · Bienvenue · Bem-vindo</p>
+      <p class="bv-sub">Elige tu idioma · Choose your language · Choisissez votre langue · Escolha seu idioma</p>
+      <div class="bv-idiomas">
+        <button type="button" data-idioma="es"><span class="cod">ES</span>Español</button>
+        <button type="button" data-idioma="en"><span class="cod">EN</span>English</button>
+        <button type="button" data-idioma="fr"><span class="cod">FR</span>Français</button>
+        <button type="button" data-idioma="pt"><span class="cod">PT</span>Português</button>
+      </div>
+    </article>
+  </dialog>
+  <div id="toast"></div>
+
+  <!-- jsPDF: genera el PDF del ticket. Debe cargarse antes de main.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- qrcode-generator: genera el codigo QR del ticket (se dibuja en pantalla y dentro del PDF) -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+  <!-- SheetJS: genera el archivo de Excel (.xlsx) del historial -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+
+</html>

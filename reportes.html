@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title data-i18n="r.titulo">Reportes · Patio Central</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/reportes.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+
+<body>
+  <div id="setup" hidden>
+    <div>
+      <h1 style="font-size:38px">Falta conectar Firebase</h1>
+      <p>Abre <code>js/firebase.js</code> y pega ahí los datos de tu proyecto.</p>
+    </div>
+  </div>
+
+  <header class="no-print">
+    <img class="logo-img" src="img/logo.svg" alt="Logo Patio Central" data-i18n-alt="app.logoAlt">
+    <div>
+      <h1>Patio Central</h1><small data-i18n="r.sub">Reportes</small>
+    </div>
+    <div class="sp"></div>
+    <select id="selIdioma" class="sel-idioma" aria-label="Idioma" title="Idioma" data-i18n-aria="idioma.label"
+      data-i18n-title="idioma.label">
+      <option value="es">Español</option>
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+      <option value="pt">Português</option>
+    </select>
+    <a class="navlink" href="index.html" data-i18n="nav.mapa">← Mapa</a>
+  </header>
+
+  <main class="rep">
+    <section class="card no-print">
+      <div class="filtros">
+        <div><label for="desde" data-i18n="r.desde">Desde</label><input id="desde" type="date"></div>
+        <div><label for="hasta" data-i18n="r.hasta">Hasta</label><input id="hasta" type="date"></div>
+        <button id="btnGenerar" data-i18n="r.generar">Generar</button>
+        <button id="btnPdf" class="sec" data-i18n="r.guardarPdf">Guardar PDF</button>
+      </div>
+      <p class="ayuda" data-i18n-html="r.ayudaPdf">«Guardar PDF» abre el diálogo de impresión del navegador: elige
+        <b>Guardar como PDF</b> como destino. Ábrelo en Chrome o Edge (la vista integrada de VS Code no permite
+        imprimir).</p>
+    </section>
+
+    <h1 class="titulo" data-i18n="r.h1">Reporte de estacionamiento</h1>
+    <p id="rango" class="rango"></p>
+
+    <section class="kpis">
+      <div class="stat y">
+        <div class="num" id="kCobrado">–</div><span data-i18n="r.kCobrado">Total cobrado</span>
+      </div>
+      <div class="stat">
+        <div class="num" id="kVeh">–</div><span data-i18n="r.kVeh">Vehículos</span>
+      </div>
+      <div class="stat">
+        <div class="num" id="kProm">–</div><span data-i18n="r.kProm">Ticket promedio</span>
+      </div>
+      <div class="stat">
+        <div class="num" id="kTiempo">–</div><span data-i18n="r.kTiempo">Estancia promedio</span>
+      </div>
+    </section>
+
+    <section class="graficas">
+      <div class="card">
+        <div class="gh">
+          <h2 data-i18n="r.gIngresos">Ingresos por día</h2>
+          <select class="no-print" data-g="gIngresos">
+            <option value="bar" data-i18n="r.t.bar">Barras</option>
+            <option value="line" data-i18n="r.t.line">Línea</option>
+            <option value="pie" data-i18n="r.t.pie">Pastel</option>
+            <option value="doughnut" data-i18n="r.t.doughnut">Dona</option>
+          </select>
+        </div>
+        <div class="wrap"><canvas id="gIngresos"></canvas></div>
+        <p class="insight" id="n-gIngresos"></p>
+      </div>
+      <div class="card">
+        <div class="gh">
+          <h2 data-i18n="r.gHoras">Entradas por hora del día</h2>
+          <select class="no-print" data-g="gHoras">
+            <option value="bar" data-i18n="r.t.bar">Barras</option>
+            <option value="line" data-i18n="r.t.line">Línea</option>
+            <option value="pie" data-i18n="r.t.pie">Pastel</option>
+            <option value="doughnut" data-i18n="r.t.doughnut">Dona</option>
+          </select>
+        </div>
+        <div class="wrap"><canvas id="gHoras"></canvas></div>
+        <p class="insight" id="n-gHoras"></p>
+      </div>
+      <div class="card">
+        <div class="gh">
+          <h2 data-i18n="r.gLugares">Uso por lugar</h2>
+          <select class="no-print" data-g="gLugares">
+            <option value="bar" data-i18n="r.t.bar">Barras</option>
+            <option value="line" data-i18n="r.t.line">Línea</option>
+            <option value="pie" data-i18n="r.t.pie">Pastel</option>
+            <option value="doughnut" data-i18n="r.t.doughnut">Dona</option>
+          </select>
+        </div>
+        <div class="wrap"><canvas id="gLugares"></canvas></div>
+        <p class="insight" id="n-gLugares"></p>
+      </div>
+      <div class="card">
+        <div class="gh">
+          <h2 data-i18n="r.gOcupacion">Ocupación actual</h2>
+          <select class="no-print" data-g="gOcupacion">
+            <option value="bar" data-i18n="r.t.bar">Barras</option>
+            <option value="line" data-i18n="r.t.line">Línea</option>
+            <option value="pie" data-i18n="r.t.pie">Pastel</option>
+            <option value="doughnut" data-i18n="r.t.doughnut">Dona</option>
+          </select>
+        </div>
+        <div class="wrap"><canvas id="gOcupacion"></canvas></div>
+        <p class="insight" id="n-gOcupacion"></p>
+      </div>
+    </section>
+
+    <section class="card hist">
+      <h2 data-i18n="r.detalle">Detalle de movimientos</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th data-i18n="th.lugar">Lugar</th>
+            <th data-i18n="th.placa">Placa</th>
+            <th data-i18n="th.entrada">Entrada</th>
+            <th data-i18n="th.salida">Salida</th>
+            <th data-i18n="th.monto">Monto</th>
+          </tr>
+        </thead>
+        <tbody id="tb">
+          <tr>
+            <td colspan="6" class="empty" data-i18n="r.vacioInicial">Genera un reporte para ver los datos</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pag-bar no-print">
+        <div id="pag" class="pag"></div>
+        <label><span data-i18n="r.filas">Filas por página</span>
+          <select id="porPag">
+            <option>25</option>
+            <option selected>50</option>
+            <option>100</option>
+          </select></label>
+      </div>
+      <p id="nota" class="nota"></p>
+    </section>
+  </main>
+
+  <div id="toast"></div>
+  <script type="module" src="js/reportes.js"></script>
+</body>
+
+</html>
